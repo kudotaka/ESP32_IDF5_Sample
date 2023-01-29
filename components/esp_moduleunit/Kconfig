@@ -1,0 +1,101 @@
+# ESP Device and ModuleUnit
+menu "Select ESP Device"
+    choice
+        prompt "Select ESP Model"
+        default HARDWARE_MODEL_EPS32S3
+        config HARDWARE_MODEL_EPS32S3
+            bool "USE-MODEL-EPS32S3-DevBoard"
+        config HARDWARE_MODEL_XIAO_EPS32C3
+            bool "USE-MODEL-XIAO-EPS32C3"
+    endchoice
+endmenu
+
+menu "ESP ModuleUnit enable"
+    config SOFTWARE_ESP_LCD_UI_SUPPORT
+        bool "UI-Hardware"
+        default n
+    choice
+        prompt "Set Display Model"
+        depends on SOFTWARE_ESP_LCD_UI_SUPPORT
+        default SOFTWARE_MODEL_SSD1306_I2C
+        config SOFTWARE_MODEL_SSD1306_I2C
+            bool "MODEL-SSD1306(I2C)"
+        config SOFTWARE_MODEL_SSD1306_SPI
+            bool "MODEL-SSD1306(SPI)"
+    endchoice
+    config SOFTWARE_ESP_WIFI_SUPPORT
+        bool "WiFi-Hardware"
+        default n
+    config WIFI_SSID
+        string "WiFi SSID"
+        depends on SOFTWARE_ESP_WIFI_SUPPORT
+        default "AWSWorkshop"
+        help
+            SSID (network name) for the example to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        depends on SOFTWARE_ESP_WIFI_SUPPORT
+        default "IoTP$AK1t"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+
+            Can be left blank if the network has no security set.
+    config SOFTWARE_ESP_ULP_TEST
+        bool "ULP-Test"
+        default n
+#    config SOFTWARE_I2C_ESP_LCD_SUPPORT
+#        bool "ESP-LCD-Test"
+#        default n
+    config SOFTWARE_UNIT_ENV2_SUPPORT
+        bool "UNIT-ENV2-Hardware"
+        default n
+    config SOFTWARE_UNIT_SK6812_SUPPORT
+        bool "UNIT-SK6812-Hardware"
+        default n
+    config SOFTWARE_UNIT_BUTTON_SUPPORT
+        bool "UNIT-BUTTON-Hardware"
+        default n
+    config SOFTWARE_UNIT_LED_SUPPORT
+        bool "UNIT-LED-Hardware"
+        default n
+    config SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT
+        bool "UNIT-4DigitDisplay"
+        default n
+    config SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT
+        bool "UNIT-6DigitDisplay"
+        default n
+    config SOFTWARE_UNIT_RTC_SUPPORT
+        bool "UNIT-RTC-Hardware"
+        default n
+    choice
+        prompt "Set RTC Model"
+        depends on SOFTWARE_UNIT_RTC_SUPPORT
+        default SOFTWARE_MODEL_RTC_PCF8563
+        config SOFTWARE_MODEL_RTC_PCF8563
+            bool "MODEL-RTC-PCF8563"
+        config SOFTWARE_MODEL_RTC_RX8900
+            bool "MODEL-RTC-RX8900"
+    endchoice
+    config SOFTWARE_I2C_LCD_ST7032_SUPPORT
+        bool "I2C-LCD-ST7032-Hardware"
+        default n
+    choice
+        prompt "Set Model"
+        depends on SOFTWARE_I2C_LCD_ST7032_SUPPORT
+        default SOFTWARE_MODEL_AQM0802
+        config SOFTWARE_MODEL_AQM0802
+            bool "MODEL-AQM0802"
+        config SOFTWARE_MODEL_AQM1602
+            bool "MODEL-AQM1602"
+    endchoice
+    choice
+        prompt "Use Backlight"
+        depends on SOFTWARE_I2C_LCD_ST7032_SUPPORT
+        default SOFTWARE_NOT_USE_BACKLIGHT
+        config SOFTWARE_USE_BACKLIGHT
+            bool "USE-BACKLIGHT"
+        config SOFTWARE_NOT_USE_BACKLIGHT
+            bool "NOT-USE-BACKLIGHT"
+    endchoice
+endmenu
