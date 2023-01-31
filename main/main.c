@@ -64,6 +64,45 @@ static uint8_t led_strip_pixels_2[RMT_LED_STRIP_LED_NUMBERS_2 * 3];
 static const char *TAG = "MY-MAIN";
 
 
+#ifdef CONFIG_SOFTWARE_BUZZER_SUPPORT
+TaskHandle_t xBuzzer;
+static void vLoopBuzzerTask(void* pvParameters) {
+    ESP_LOGI(TAG, "Buzzer is start!");
+
+    Buzzer_Init(PORT_D3_PIN);
+    uint32_t DUTY_MAX_VALUE = 8190;
+    uint32_t duty[] = {DUTY_MAX_VALUE/4*2};
+    while (1) {
+        vTaskSuspend(NULL);
+        for (uint32_t i = 0; i < sizeof(duty)/sizeof(uint32_t); i++)
+        {
+            ESP_LOGI(TAG, "Buzzer duty:%ld", duty[i]);
+            Buzzer_Play_Duty_Frequency(duty[i], 261.6);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 293.665);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 329.63);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 349.228);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 391.995);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 440);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 493.883);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+            Buzzer_Play_Duty_Frequency(duty[i], 523.251);
+            vTaskDelay( pdMS_TO_TICKS(500) );
+
+            Buzzer_Stop();
+            vTaskDelay( pdMS_TO_TICKS(5000) );
+        }
+    }
+
+    vTaskDelete(NULL); // Should never get to here...
+}
+#endif
+
 #ifdef CONFIG_SOFTWARE_UNIT_BUTTON_SUPPORT
 TaskHandle_t xButton;
 Button_t* button1 = NULL;
@@ -106,6 +145,9 @@ static void button_task(void* pvParameters) {
                 ESP_LOGI(TAG, "button1 BUTTON LONGPRESS!");
 #ifdef CONFIG_SOFTWARE_MODEL_SSD1306_I2C
                 ui_button_label_update(false);
+#endif
+#ifdef CONFIG_SOFTWARE_BUZZER_SUPPORT
+            vTaskResume(xBuzzer);
 #endif
             }
         }
@@ -821,6 +863,11 @@ void app_main() {
 #if ( CONFIG_SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT || CONFIG_SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT )
     // DIGIT DISPLAY
     xTaskCreatePinnedToCore(&vLoopUnitDigitDisplayTask, "vLoopUnitDigitDisplayTask", 4096 * 1, NULL, 2, &xDigitDisplay, 1);
+#endif
+
+#ifdef CONFIG_SOFTWARE_BUZZER_SUPPORT
+    // BUZZER
+    xTaskCreatePinnedToCore(&vLoopBuzzerTask, "buzzer_task", 4096 * 1, NULL, 2, &xBuzzer, 1);
 #endif
 
 #if CONFIG_SOFTWARE_ESP_ULP_TEST

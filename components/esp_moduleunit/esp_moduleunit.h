@@ -60,6 +60,10 @@
 #include "st7032.h"
 #endif
 
+#ifdef CONFIG_SOFTWARE_BUZZER_SUPPORT
+#include "buzzer.h"
+#endif
+
 // ESP Model
 #define PORT_I2C_STANDARD_BAUD 400000
 #define PORT_LEVEL_HIGH 1

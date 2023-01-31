@@ -98,4 +98,7 @@ menu "ESP ModuleUnit enable"
         config SOFTWARE_NOT_USE_BACKLIGHT
             bool "NOT-USE-BACKLIGHT"
     endchoice
+    config SOFTWARE_BUZZER_SUPPORT
+        bool "BUZZER-Hardware"
+        default n
 endmenu
