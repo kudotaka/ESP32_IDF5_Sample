@@ -114,7 +114,7 @@ void ui_temperature_update(int32_t value){
 void ui_start()
 {
 #ifdef CONFIG_SOFTWARE_ESP_LCD_UI_SUPPORT
-    ESP_LOGI(TAG, "example_lvgl_demo_ui() start.");
+    ESP_LOGI(TAG, "ui_start() start.");
 
     if (xGuiSemaphore == NULL) {
         xGuiSemaphore = xSemaphoreCreateMutex();

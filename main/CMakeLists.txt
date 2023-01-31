@@ -5,6 +5,8 @@ idf_component_register(SRCS "main.c" "led_strip_encoder.c"
                     INCLUDE_DIRS "" "includes"
                     REQUIRES soc ulp esp_moduleunit)
 
+if(CONFIG_HARDWARE_MODEL_EPS32S3)
+
 #
 # ULP support additions to component CMakeLists.txt.
 #
@@ -26,3 +28,5 @@ set(ulp_exp_dep_srcs "main.c")
 # 4. Call function to build ULP binary and embed in project using the argument
 #    values above.
 ulp_embed_binary(${ulp_app_name} "${ulp_riscv_sources}" "${ulp_exp_dep_srcs}")
+
+endif()

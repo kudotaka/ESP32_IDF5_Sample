@@ -72,12 +72,21 @@ static void button_task(void* pvParameters) {
     ESP_LOGI(TAG, "start button_task");
     Button_Init();
 
+#if CONFIG_HARDWARE_MODEL_EPS32S3
     if (Button_Enable(PORT_D4_PIN, BUTTON_ACTIVE_LOW) == ESP_OK) {
         button1 = Button_Attach(PORT_D4_PIN, BUTTON_ACTIVE_LOW);
         if (button1 == NULL) {
             ESP_LOGE(TAG, "Button_Attach : button1");
         }
     }
+#elif CONFIG_HARDWARE_MODEL_XIAO_EPS32C3
+    if (Button_Enable(PORT_D9_PIN, BUTTON_ACTIVE_LOW) == ESP_OK) {
+        button1 = Button_Attach(PORT_D9_PIN, BUTTON_ACTIVE_LOW);
+        if (button1 == NULL) {
+            ESP_LOGE(TAG, "Button_Attach : button1");
+        }
+    }
+#endif
 
     while(1){
         if (button1 != NULL) {
@@ -115,9 +124,15 @@ static void external_led_task(void* pvParameters) {
     ESP_LOGI(TAG, "start external_led_task");
     Led_Init();
 
+#if CONFIG_HARDWARE_MODEL_EPS32S3
     if (Led_Enable(PORT_D5_PIN, LED_ACTIVE_HIGH) == ESP_OK) {
         led_ext1 = Led_Attach(PORT_D5_PIN, LED_ACTIVE_HIGH);
     }
+#elif CONFIG_HARDWARE_MODEL_XIAO_EPS32C3
+    if (Led_Enable(PORT_D10_PIN, LED_ACTIVE_HIGH) == ESP_OK) {
+        led_ext1 = Led_Attach(PORT_D10_PIN, LED_ACTIVE_HIGH);
+    }
+#endif
 
     while(1){
         Led_OnOff(led_ext1, true);
@@ -757,6 +772,9 @@ void app_main() {
 
 #ifdef CONFIG_SOFTWARE_ESP_LCD_UI_SUPPORT
 #ifdef CONFIG_SOFTWARE_MODEL_SSD1306_I2C
+#if CONFIG_HARDWARE_MODEL_XIAO_EPS32C3
+    vTaskDelay(pdMS_TO_TICKS(10000));
+#endif
     // ESP-LCD
     Ssd1306_I2c_Init(I2C_NUM_0, PORT_SDA_PIN, PORT_SCL_PIN, GPIO_NUM_NC, PORT_I2C_STANDARD_BAUD);
     ui_start();
