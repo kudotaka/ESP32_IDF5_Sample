@@ -535,6 +535,43 @@ void vLoopUnitEnv2Task(void *pvParametes)
 }
 #endif
 
+#ifdef CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT
+TaskHandle_t xUnitEnv3;
+void vLoopUnitEnv3Task(void *pvParametes)
+{
+    ESP_LOGI(TAG, "start I2C Sht3x");
+    esp_err_t ret = ESP_OK;
+    ret = Sht3x_Init(I2C_NUM_0, PORT_SDA_PIN, PORT_SCL_PIN, PORT_I2C_STANDARD_BAUD);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Sht3x_Init Error");
+        return;
+    }
+    ESP_LOGI(TAG, "start I2C Qmp6988");
+    ret = Qmp6988_Init(I2C_NUM_0, PORT_SDA_PIN, PORT_SCL_PIN, PORT_I2C_STANDARD_BAUD);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Qmp6988_Init Error");
+        return;
+    }
+
+    while (1) {
+        ret = Sht3x_Read();
+        if (ret == ESP_OK) {
+            vTaskDelay( pdMS_TO_TICKS(100) );
+            ESP_LOGI(TAG, "temperature:%f, humidity:%f, pressure:%fhPa", Sht3x_GetTemperature(), Sht3x_GetHumidity(), Qmp6988_GetPressure()/100 );
+#ifdef CONFIG_SOFTWARE_MODEL_SSD1306_I2C
+            ui_temperature_update( Sht3x_GetIntTemperature() );
+            ui_humidity_update( Sht3x_GetIntHumidity() );
+#endif
+        } else {
+            ESP_LOGE(TAG, "Sht3x_Read() is error code:%d", ret);
+            vTaskDelay( pdMS_TO_TICKS(10000) );
+        }
+
+        vTaskDelay( pdMS_TO_TICKS(5000) );
+    }
+}
+#endif
+
 #ifdef CONFIG_SOFTWARE_I2C_LCD_ST7032_SUPPORT
 TaskHandle_t xLcdSt7032;
 uint8_t degree[] = {
@@ -851,8 +888,13 @@ void app_main() {
 #endif
 
 #ifdef CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT
-    // UI ACTIVE
+    // ENV2
     xTaskCreatePinnedToCore(&vLoopUnitEnv2Task, "unit_env2_task", 4096 * 1, NULL, 2, &xUnitEnv2, 1);
+#endif
+
+#ifdef CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT
+    // ENV3
+    xTaskCreatePinnedToCore(&vLoopUnitEnv3Task, "unit_env3_task", 4096 * 1, NULL, 2, &xUnitEnv3, 1);
 #endif
 
 #ifdef CONFIG_SOFTWARE_I2C_LCD_ST7032_SUPPORT

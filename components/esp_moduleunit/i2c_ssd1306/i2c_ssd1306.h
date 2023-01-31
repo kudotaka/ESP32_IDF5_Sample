@@ -10,7 +10,7 @@
 void ui_datetime_set(char *dateTxt);
 #endif
 
-#ifdef CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT
+#if ( CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT || CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT )
 void ui_temperature_update(int32_t value);
 void ui_humidity_update(int32_t value);
 #endif

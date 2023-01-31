@@ -50,6 +50,9 @@ menu "ESP ModuleUnit enable"
     config SOFTWARE_UNIT_ENV2_SUPPORT
         bool "UNIT-ENV2-Hardware"
         default n
+    config SOFTWARE_UNIT_ENV3_SUPPORT
+        bool "UNIT-ENV3-Hardware"
+        default n
     config SOFTWARE_UNIT_SK6812_SUPPORT
         bool "UNIT-SK6812-Hardware"
         default n

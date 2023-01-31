@@ -35,7 +35,7 @@ static lv_obj_t *active_screen;
 static lv_obj_t *wifi_label;
 #endif
 
-#ifdef CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT
+#if ( CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT || CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT )
 #define MOJI_DEGREESIGN  "°C"
 static lv_obj_t *humidity_current;
 static lv_obj_t *humidity_label;
@@ -93,7 +93,7 @@ void ui_datetime_set(char *dateTxt) {
 }
 #endif
 
-#ifdef CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT
+#if ( CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT || CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT )
 void ui_humidity_update(int32_t value){
     xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
 
@@ -135,8 +135,7 @@ void ui_start()
     lv_label_set_text(button_label, "");
 #endif
 
-
-#ifdef CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT
+#if ( CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT || CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT )
     humidity_current = lv_label_create(active_screen);
     lv_label_set_long_mode(humidity_current, LV_LABEL_LONG_DOT);
     lv_obj_set_style_text_align(humidity_current, LV_TEXT_ALIGN_LEFT, 0);
