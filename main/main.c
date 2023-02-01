@@ -34,6 +34,7 @@ static void init_ulp_program(void);
    || CONFIG_SOFTWARE_MODEL_SSD1306_I2C \
    || CONFIG_SOFTWARE_ESP_WIFI_SUPPORT \
    || CONFIG_SOFTWARE_UNIT_ENV2_SUPPORT \
+   || CONFIG_SOFTWARE_UNIT_ENV3_SUPPORT \
    || CONFIG_SOFTWARE_UNIT_SK6812_SUPPORT \
    || CONFIG_SOFTWARE_UNIT_4DIGIT_DISPLAY_SUPPORT \
    || CONFIG_SOFTWARE_UNIT_6DIGIT_DISPLAY_SUPPORT \
@@ -515,12 +516,18 @@ void vLoopUnitEnv2Task(void *pvParametes)
         ESP_LOGE(TAG, "Sht3x_Init Error");
         return;
     }
+    ESP_LOGI(TAG, "start I2C Bmp280");
+    ret = Bmp280_Init(I2C_NUM_0, PORT_SDA_PIN, PORT_SCL_PIN, PORT_I2C_STANDARD_BAUD);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Bmp280_Init Error");
+        return;
+    }
 
     while (1) {
         ret = Sht3x_Read();
         if (ret == ESP_OK) {
             vTaskDelay( pdMS_TO_TICKS(100) );
-            ESP_LOGI(TAG, "temperature:%f, humidity:%f", Sht3x_GetTemperature(), Sht3x_GetHumidity());
+            ESP_LOGI(TAG, "temperature:%f, humidity:%f, pressure:%fhPa", Sht3x_GetTemperature(), Sht3x_GetHumidity(), Bmp280_GetPressure()/100 );
 #ifdef CONFIG_SOFTWARE_MODEL_SSD1306_I2C
             ui_temperature_update( Sht3x_GetIntTemperature() );
             ui_humidity_update( Sht3x_GetIntHumidity() );
